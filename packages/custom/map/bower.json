@@ -1,0 +1,7 @@
+{
+  "name": "map",
+  "version": "0.0.1",
+  "dependencies": {
+    "angular-leaflet-directive": "~0.7.11"
+  }
+}
