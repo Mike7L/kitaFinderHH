@@ -1,8 +1,16 @@
-<div class="" data-ng-controller="MapController" data-ng-init="filterKitas()">
-  <leaflet defaults="defaults" geojson="geojson" markers="markers" bounds="bounds" center="center" height="480px" width="640px"></leaflet>
+<div class="" data-ng-controller="MapController" data-ng-init="init()">
+  <leaflet defaults="defaults" geojson="geojson" markers="markers" bounds="bounds" center="center"></leaflet>
+  <div class="main">
+    <div class="container-fluid">
+      <h1>Kita Finder Hamburg</h1>
+      <div>Filter</div>
+      <div>Leistungen</div>
+      <div>Bezirk</div>
+      <h4 class="active">Stadtteil</h4>
+      <div data-ng-repeat="stadtteil in stadtteile">
+        <span data-ng-click="toggleFilter('stadtteile', stadtteil)" data-ng-class="{'active': filterIsActive('stadtteile', stadtteil)}">{{stadtteil}}</span>
+      </div>
+    </div>
+  </div>
 </div>
-<div>Filter</div>
-<div>Leistungen</div>
-<div>Bezirk</div>
-<div>Stadtteil</div>
 
