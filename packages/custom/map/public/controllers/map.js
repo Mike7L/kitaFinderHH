@@ -13,50 +13,58 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
 
     $scope.center = [];
 
+    $scope.showFilterOverlay = false;
+
     $scope.leistungen = [];
     $scope.stadtteile = [];
     $scope.bezirke = [];
+    $scope.spitzenverbaende = [];
+    $scope.traeger = [];
+
 
     $scope.filter = {
       leistungen: [],
       stadtteile: [],
-      bezirke: []
-    };
-
-    $scope.toggleFilter = function(type, val) {
-      if($scope.filter[type].indexOf(val) != -1) {
-        $scope.filter[type] = _.without($scope.filter[type], val); //remove from filterlist
-      } else {
-        $scope.filter[type].push(val); //add to filterlist
-      }
-    };
-
-    $scope.filterIsActive = function(type, val) {
-      return $scope.filter[type].indexOf(val) != -1;
-    };
-
-    $scope.filterKitas = function() {
-      $scope.markers = null;
-      if($scope.filter.leistungen.length > 0 || $scope.filter.stadtteile.length > 0 || $scope.filter.bezirke.length > 0) {
+      bezirke: [],
+      spitzenverbaende: [],
+      toggle: function(type, val) {
+        if($scope.filter[type].indexOf(val) !== -1) {
+          $scope.filter[type] = _.without($scope.filter[type], val); //remove from filterlist
+        } else {
+          $scope.filter[type].push(val); //add to filterlist
+        }
+      },
+      isActive: function(type, val) {
+        return $scope.filter[type].indexOf(val) !== -1;
+      },
+      apply: function() {
+        $scope.markers = null;
         angular.extend($scope, {
           markers: _.filter(markers, function(marker) {
-            return _.isArray(marker.properties.Stadtteil) && $scope.filter.stadtteile.indexOf(marker.properties.Stadtteil[0]) != -1;
+            return ($scope.filter.leistungen.length === 0 || _.intersection(marker.properties.Leistungsname, $scope.filter.leistungen).length > 0) &&
+              ($scope.filter.stadtteile.length === 0 || _.intersection(marker.properties.Stadtteil, $scope.filter.stadtteile).length > 0) &&
+              ($scope.filter.bezirke.length === 0 || _.intersection(marker.properties.Bezirk, $scope.filter.bezirke).length > 0) &&
+              ($scope.filter.spitzenverbaende.length === 0 || _.intersection(marker.properties.Spitzenverband, $scope.filter.spitzenverbaende).length > 0);
           })
-        });
-      } else {
-        angular.extend($scope, {
-          markers: markers
         });
       }
     };
 
-    $scope.$watch('filter.stadtteile.length', function() {
-      $scope.filterKitas();
+    $scope.$watchGroup([
+        'filter.stadtteile.length',
+        'filter.leistungen.length', 
+        'filter.bezirke.length', 
+        'filter.spitzenverbaende.length'
+      ], function() {
+        $scope.filter.apply();
     });
 
     $scope.init = function() {
 
-      var maxlat, maxlng, minlat, minlng = null;
+      var maxlat, 
+          maxlng, 
+          minlat, 
+          minlng;
       
       $http.get('/map/assets/kitas.geojson').then(function(data) {
         var features = data.data.features;
@@ -80,7 +88,7 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
               properties: features[i].properties
             };
 
-            // expand the bounds
+            // expand the bounds of feature
             if(!maxlat || maxlat < features[i].geometry.coordinates[1]) {
               maxlat = features[i].geometry.coordinates[1];
             }
@@ -94,18 +102,35 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
               minlng = features[i].geometry.coordinates[0];
             }
 
-            // ad stadteil to stadtteil filter
+            // add the properties of feature
+            if(_.isArray(features[i].properties.Leistungsname)) {
+              $scope.leistungen.push(features[i].properties.Leistungsname);
+            }
             if(_.isArray(features[i].properties.Stadtteil)) {
-              $scope.stadtteile.push(features[i].properties.Stadtteil[0]);
+              $scope.stadtteile.push(features[i].properties.Stadtteil);
+            }
+            if(_.isArray(features[i].properties.Bezirk)) {
+              $scope.bezirke.push(features[i].properties.Bezirk);
+            }
+            if(_.isArray(features[i].properties.Spitzenverband)) {
+              $scope.spitzenverbaende.push(features[i].properties.Spitzenverband);
+            }
+            if(_.isArray(features[i].properties.Traeger)) {
+              $scope.traeger.push(features[i].properties.Traeger);
             }
           } // --if
 
         } // --for
 
-        $scope.stadtteile = _.uniq($scope.stadtteile.sort(), true);
+        $scope.leistungen = _.uniq(_.flatten($scope.leistungen).sort(), true);
+        $scope.bezirke = _.uniq(_.flatten($scope.bezirke).sort(), true);
+        $scope.stadtteile = _.uniq(_.flatten($scope.stadtteile).sort(), true);
+        $scope.spitzenverbaende = _.uniq(_.flatten($scope.spitzenverbaende).sort(), true);
+        $scope.traeger = _.uniq(_.flatten($scope.traeger).sort(), true);
 
         // angular-leaflet boundshelper
         var bounds = leafletBoundsHelpers.createBoundsFromArray([ [minlat, minlng], [maxlat, maxlng] ]);
+
 
         // extend the controller's scope with markers and bounds
         angular.extend($scope, {
@@ -114,6 +139,12 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
           center: []
         });
       });
+    };
+
+    $scope.toggleFilterOverlay = function() {
+      $scope.showFilterOverlay = $scope.showFilterOverlay ?
+        false :
+        true;
     };
   }
 ]);

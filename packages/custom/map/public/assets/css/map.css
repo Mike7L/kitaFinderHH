@@ -1,25 +1,38 @@
-.map-example h1 {
-  background-color: purple
-}
-
-.active {
+.filter-active {
   color: red;
-}
-
-.angular-leaflet-map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 40%;
-  right: 0;
 }
 
 .main {
   position: absolute;
-  top: 0;
+  top: 60px;
   bottom: 0;
   left: 0;
-  right: 60%;
+  right: 0;
   overflow-y: auto;
 }
 
+#filter-overlay {
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  left: 50%;
+  right: 0;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 30px 20px;
+}
+
+#filter-btn {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+}
+
+.angular-leaflet-map {
+  height: 100%;
+  width: 100%;
+}
+
+.tab-content {
+  margin: 10px 0;
+}

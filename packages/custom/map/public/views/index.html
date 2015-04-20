@@ -1,16 +1,56 @@
-<div class="" data-ng-controller="MapController" data-ng-init="init()">
-  <leaflet defaults="defaults" geojson="geojson" markers="markers" bounds="bounds" center="center"></leaflet>
-  <div class="main">
+
+<div data-ng-controller="MapController" data-ng-init="init()">
+  <div class="head">
     <div class="container-fluid">
-      <h1>Kita Finder Hamburg</h1>
-      <div>Filter</div>
-      <div>Leistungen</div>
-      <div>Bezirk</div>
-      <h4 class="active">Stadtteil</h4>
-      <div data-ng-repeat="stadtteil in stadtteile">
-        <span data-ng-click="toggleFilter('stadtteile', stadtteil)" data-ng-class="{'active': filterIsActive('stadtteile', stadtteil)}">{{stadtteil}}</span>
+      <div class="col-xs-6">
+        <h2>Kita Finder Hamburg</h2>  
       </div>
     </div>
+  </div>
+  <div class="main">
+    <leaflet defaults="defaults" geojson="geojson" markers="markers" bounds="bounds" center="center"></leaflet>
+  </div>
+  <div id="filter-overlay" data-ng-if="showFilterOverlay">
+    <tabset>
+      <tab heading="Leistungen">
+          <ul class="list list-inline">
+          <li data-ng-repeat="leistung in leistungen">
+            <span class="label label-default" data-ng-click="filter.toggle('leistungen', leistung)" data-ng-class="{'label-primary': filter.isActive('leistungen', leistung)}">
+              {{leistung}}
+            </span>
+          </li>
+          </ul>
+      </tab>
+      <tab heading="Bezirke">
+          <ul class="list list-inline">
+            <li  data-ng-repeat="bezirk in bezirke">
+              <span class="label label-default"data-ng-click="filter.toggle('bezirke', bezirk)" data-ng-class="{'label-primary': filter.isActive('bezirke', bezirk)}">
+                {{bezirk}}
+              </span>
+            </li>
+          </ul>
+      </tab>
+      <tab heading="Stadtteile">
+        <ul class="list list-inline">
+          <li data-ng-repeat="stadtteil in stadtteile">
+            <span class="label label-default" data-ng-click="filter.toggle('stadtteile', stadtteil)" data-ng-class="{'label-primary':  filte.isActive('stadtteile', stadtteil)}">
+              {{stadtteil}}
+            </span>
+          </li>
+        </ul>
+      </tab>
+      <tab heading="Spitzenverbände">
+        <ul class="list list-inline">
+          <li data-ng-repeat="spitzenverband in spitzenverbaende">
+            <span class="label label-default" data-ng-click="filter.toggle('spitzenverbaende', spitzenverband)" data-ng-class="{'label-primary': filter.isActive('spitzenverbaende', spitzenverband)}">
+              {{spitzenverband}}
+            </span>
+          </li>
+        </ul>
+      </tab>
+    </tabset>
+  </div>
+  <div id="filter-btn" class="btn btn-primary btn-lg" ng-click="toggleFilterOverlay()">Filter</div>
   </div>
 </div>
 
