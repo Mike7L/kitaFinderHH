@@ -11,44 +11,16 @@
     <leaflet defaults="defaults" geojson="geojson" markers="markers" bounds="bounds" center="center"></leaflet>
   </div>
   <div id="filter-overlay" data-ng-if="showFilterOverlay">
-    <tabset>
-      <tab heading="Leistungen">
-          <ul class="list list-inline">
-          <li data-ng-repeat="leistung in leistungen">
-            <span class="label label-default" data-ng-click="filter.toggle('leistungen', leistung)" data-ng-class="{'label-primary': filter.isActive('leistungen', leistung)}">
-              {{leistung}}
-            </span>
-          </li>
-          </ul>
-      </tab>
-      <tab heading="Bezirke">
-          <ul class="list list-inline">
-            <li  data-ng-repeat="bezirk in bezirke">
-              <span class="label label-default"data-ng-click="filter.toggle('bezirke', bezirk)" data-ng-class="{'label-primary': filter.isActive('bezirke', bezirk)}">
-                {{bezirk}}
-              </span>
-            </li>
-          </ul>
-      </tab>
-      <tab heading="Stadtteile">
-        <ul class="list list-inline">
-          <li data-ng-repeat="stadtteil in stadtteile">
-            <span class="label label-default" data-ng-click="filter.toggle('stadtteile', stadtteil)" data-ng-class="{'label-primary':  filte.isActive('stadtteile', stadtteil)}">
-              {{stadtteil}}
-            </span>
-          </li>
-        </ul>
-      </tab>
-      <tab heading="Spitzenverbände">
-        <ul class="list list-inline">
-          <li data-ng-repeat="spitzenverband in spitzenverbaende">
-            <span class="label label-default" data-ng-click="filter.toggle('spitzenverbaende', spitzenverband)" data-ng-class="{'label-primary': filter.isActive('spitzenverbaende', spitzenverband)}">
-              {{spitzenverband}}
-            </span>
-          </li>
-        </ul>
-      </tab>
-    </tabset>
+    <div data-ng-repeat="filtProp in filterProperties">
+      <h3>{{filtProp.label}}</h3>
+      <ul class="list list-inline">
+        <li data-ng-repeat="filterName in filtProp.values">
+          <span class="label label-default" data-ng-click="filter.toggle(filtProp.reference, filterName)" data-ng-class="{'label-primary': filter.isActive(filtProp.reference, filterName)}">
+            {{filterName}} 
+          </span>
+        </li>
+      </ul>
+    </div>
   </div>
   <div id="filter-btn" class="btn btn-primary btn-lg" ng-click="toggleFilterOverlay()">Filter</div>
   </div>
