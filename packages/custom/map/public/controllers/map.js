@@ -11,6 +11,16 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
       name: 'map'
     };
 
+    $scope.tiles = {
+      name: 'MyMapboxTiles',
+      url: 'http://api.tiles.mapbox.com/v4/{mapid}/{z}/{x}/{y}.png?access_token={apikey}',
+      type: 'xyz',
+      options: {
+          apikey: 'pk.eyJ1IjoiaG5yY2hyZGwiLCJhIjoiTnBfaExPTSJ9.tey74sfeV-vLUx9r6dMeLg',
+          mapid: 'hnrchrdl.j48ecopb'
+      }
+    };
+
     $scope.center = [];
 
     $scope.showFilterOverlay = false;
@@ -75,8 +85,6 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
 
     $scope.init = function() {
 
-      console.log('init');
-
       var maxlat, 
           maxlng, 
           minlat, 
@@ -95,7 +103,7 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
           // convert feature to marker
           if(features[i].geometry) {
 
-            // create new marker and add to markers array
+            // create new marker and add to markers obj
             markers[features[i].properties.gml_id] = {
               //group: group, // this adds the marker to a markercluster group
               //group: 'onegroup', // this adds the marker to a markercluster group
