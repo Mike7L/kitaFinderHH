@@ -1,8 +1,8 @@
 'use strict';
 
 /* jshint -W098 */
-angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leafletData', 'leafletBoundsHelpers', 'Global', 'Map',
-  function($scope, $http, leafletData, leafletBoundsHelpers, Global, Map) {
+angular.module('mean.map').controller('MapController', ['$scope', '$http', '$timeout', 'leafletData', 'leafletBoundsHelpers', 'Global', 'Map',
+  function($scope, $http, $timeout, leafletData, leafletBoundsHelpers, Global, Map) {
     
     var markers = {};
 
@@ -72,7 +72,7 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
 
     var applyFilter = function() {
       $scope.markers = {};
-      $scope.markers = _.filter(markers, function(marker) {
+      var _markers = _.filter(markers, function(marker) {
         var showMarker = true;
         _.each($scope.filterProperties, function(filtProp) {
           if(filtProp.filtered.length > 0 && _.intersection(marker.properties[filtProp.reference], filtProp.filtered).length === 0) {
@@ -80,6 +80,10 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
           }
         });
         return showMarker;
+      });
+      console.log(markers);
+      $timeout(function() {
+        $scope.markers = _markers;
       });
     };
 
@@ -106,7 +110,7 @@ angular.module('mean.map').controller('MapController', ['$scope', '$http', 'leaf
             // create new marker and add to markers obj
             markers[features[i].properties.gml_id] = {
               //group: group, // this adds the marker to a markercluster group
-              //group: 'onegroup', // this adds the marker to a markercluster group
+              group: 'onegroup', // this adds the marker to a markercluster group
               lat: features[i].geometry.coordinates[1],
               lng: features[i].geometry.coordinates[0],
               properties: features[i].properties
